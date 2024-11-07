@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import Navbar from "@/custom_components/CommonComponents/Navbar";
 import Footer from "@/custom_components/CommonComponents/Footer";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
+import { NextUIProvider } from "@nextui-org/react";
 
 const fontHeading = Manrope({
   subsets: ["latin"],
@@ -27,10 +28,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           fontBody.variable
         )}
       >
-        <Navbar />
-        {children}
-        <Analytics />
-        <Footer />
+        <NextUIProvider>
+          <Navbar />
+          {children}
+          <Analytics />
+          <Footer />
+        </NextUIProvider>
       </body>
     </html>
   );
