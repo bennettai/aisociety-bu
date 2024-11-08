@@ -54,8 +54,15 @@ const Navbar = () => {
           )}
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="eventRegistration" className="ml-6">
+                {/* <ShimmerButton text="Join Us" /> */}
+                <Button variant="ghost" color="secondary">Register for Hunt AI</Button>
+              </Link>
+            </NavigationMenuLink>
+            <NavigationMenuLink asChild>
               <Link href="join" className="ml-6">
-                <ShimmerButton text="Join Us" />
+                {/* <ShimmerButton text="Join Us" /> */}
+                <Button >Join Us</Button>
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
