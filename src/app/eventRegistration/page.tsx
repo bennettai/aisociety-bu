@@ -16,6 +16,7 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { supabase } from "../../../supabase";
+import Link from "next/link";
 
 type Props = {};
 
@@ -33,38 +34,65 @@ const Page = (props: Props) => {
   );
   const [loading, setLoading] = useState(false);
   const [userTable, setUserTable] = useState<any[]>([]);
-  const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);
 
-    if (
-      teamName.length > 0 &&
-      errorMessage.length === 0 &&
-      warningMessage.length === 0
-    ) {
-      const updatedDetails = teamDetails.map((member) => ({
-        ...member,
-        team_name: teamName,
-      }));
+    const updatedDetails = teamDetails.map((member) => ({
+      ...member,
+      team_name: teamName,
+    }));
 
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .insert(updatedDetails)
-          .select();
+    if (teamName.length > 0) {
 
-        if(data){
-          alert("Registration Succesfull !")
-          closeModal()
+      let pushToDB = false;
+
+      for (let i = 0; i < updatedDetails.length; i++) {
+        const duplicateMember = userTable.some(
+          (user) =>
+            user.team_member_email === updatedDetails[i].team_member_email
+        );
+        const duplicateTeamName = userTable.some(
+          (user) => user.team_name === updatedDetails[i].team_name
+        );
+
+        if (duplicateTeamName) {
+          setErrorMessage(
+            `Team '${updatedDetails[i].team_name}' Already exists`
+          );
+          setLoading(false);
+          pushToDB = false;
+          break;
+        } else if (duplicateMember) {
+          setErrorMessage(
+            `${updatedDetails[i].team_member_email} Already exists`
+          );
+          setLoading(false);
+          pushToDB = false;
+          break;
+
+        } else {
+          setErrorMessage("");
+          pushToDB = true;
         }
+      }
 
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
+      if (pushToDB) {
+        try {
+          const { data, error } = await supabase
+            .from("users")
+            .insert(updatedDetails)
+            .select();
+          if (data) {
+            setRegistrationSuccess(true)
+          }
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
+        }
       }
     } else {
       alert("Please fill in all the values");
@@ -74,22 +102,9 @@ const Page = (props: Props) => {
 
   const handleMemberChange = (index: number, field: string, value: string) => {
     const updatedDetails = [...teamDetails];
-    const isDuplicate = userTable.some((user) => user[field] === value);
 
-    if (isDuplicate) {
-      setErrorMessage(`${value} already exists in our database`);
-    } else {
-      setErrorMessage("");
-      updatedDetails[index][field] = value;
-      setTeamDetails(updatedDetails);
-    }
-  };
-
-  const checkTeamName = () => {
-    const isDuplicate = userTable.some(
-      (user) => user["team_name"] === teamName
-    );
-    return isDuplicate;
+    updatedDetails[index][field] = value;
+    setTeamDetails(updatedDetails);
   };
 
   const fetchUserTable = async () => {
@@ -113,23 +128,17 @@ const Page = (props: Props) => {
     };
 
     loadData();
+  }, []);
 
-    const isDuplicate = checkTeamName();
-
-    if (isDuplicate) {
-      setWarningMessage(`${teamName} is already Taken`);
-    } else {
-      setWarningMessage("");
-    }
-
+  useEffect(() => {
     setTeamDetails(
       Array.from({ length: memberCount }, () => ({
         team_member_name: "",
         team_member_email: "",
-        team_name: teamName,
+        team_name: "",
       }))
     );
-  }, [memberCount, teamName]);
+  }, [memberCount]);
 
   return (
     <div className="container mx-auto">
@@ -143,85 +152,100 @@ const Page = (props: Props) => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Register for AI Hunt
+                Registration for AI Hunt
               </ModalHeader>
-              <ModalBody>
-                <div>
-                  <Input
-                    type="text"
-                    variant="faded"
-                    label="Team Name"
-                    value={teamName}
-                    onValueChange={setTeamName}
-                  />
-                  {warningMessage.length > 0 ? (
-                    <p
-                      style={{
-                        color: warningMessage.length > 0 ? "red" : "black",
-                        marginTop: 15,
-                      }}
-                    >
-                      {warningMessage}
-                    </p>
-                  ) : null}
 
-                  <div className="flex mt-4 flex-1 items-center">
-                    <p className="mr-4">Number of Members</p>
-                    <Dropdown>
-                      <DropdownTrigger>
-                        <Button variant="bordered">{memberCount}</Button>
-                      </DropdownTrigger>
-                      <DropdownMenu
-                        aria-label="Static Actions"
-                        onAction={(key) => setMemberCount(Number(key))}
+              {registrationSuccess ? (
+                <>
+                  <ModalBody>
+                    <div className="flex justify-center">
+                      <h1 className="text-center">
+                        You have successfully registered for hunt AI
+                      </h1>
+                    </div>
+                  </ModalBody>{" "}
+                  <ModalFooter>
+                    <Link href="/">
+                      <Button
+                        color="danger"
+                        variant="light"
+                        onPress={closeModal}
                       >
-                        <DropdownItem key="1">1</DropdownItem>
-                        <DropdownItem key="2">2</DropdownItem>
-                        <DropdownItem key="3">3</DropdownItem>
-                        <DropdownItem key="4">4</DropdownItem>
-                        <DropdownItem key="5">5</DropdownItem>
-                      </DropdownMenu>
-                    </Dropdown>
-                  </div>
-                </div>
-
-                <div>
-                  {Array.from({ length: memberCount }, (_, index) => (
-                    <>
-                      <div
-                        key={index}
-                        className="flex flex-1 mb-3 items-center"
-                      >
-                        <Input
-                          type="email"
-                          variant="faded"
-                          label="Member Mail"
-                          // color={errorMessage.length > 0 ? "danger" : "default"}
-                          value={teamDetails[index]?.team_member_email}
-                          onValueChange={(value) =>
-                            handleMemberChange(
-                              index,
-                              "team_member_email",
-                              value
-                            )
-                          }
-                        />
-                        <div className="ml-4">
-                          <Input
-                            type="text"
-                            variant="faded"
-                            label="Name"
-                            value={teamDetails[index]?.team_member_name}
-                            onValueChange={(value) =>
-                              handleMemberChange(
-                                index,
-                                "team_member_name",
-                                value
-                              )
-                            }
-                          />
-                        </div>
+                        Close
+                      </Button>
+                    </Link>
+                  </ModalFooter>
+                </>
+              ) : (
+                <>
+                  <ModalBody>
+                    <div>
+                      <Input
+                        type="text"
+                        variant="faded"
+                        label="Team Name"
+                        value={teamName}
+                        onValueChange={setTeamName}
+                      />
+                      <div className="flex mt-4 flex-1 items-center">
+                        <p className="mr-4">Number of Members</p>
+                        <Dropdown>
+                          <DropdownTrigger>
+                            <Button variant="bordered">{memberCount}</Button>
+                          </DropdownTrigger>
+                          <DropdownMenu
+                            aria-label="Static Actions"
+                            onAction={(key) => setMemberCount(Number(key))}
+                          >
+                            <DropdownItem key="1">1</DropdownItem>
+                            <DropdownItem key="2">2</DropdownItem>
+                            <DropdownItem key="3">3</DropdownItem>
+                            <DropdownItem key="4">4</DropdownItem>
+                            <DropdownItem key="5">5</DropdownItem>
+                          </DropdownMenu>
+                        </Dropdown>
                       </div>
+                    </div>
+
+                    <div>
+                      {Array.from({ length: memberCount }, (_, index) => (
+                        <>
+                          <div
+                            key={index}
+                            className="flex flex-1 mb-3 items-center"
+                          >
+                            <Input
+                              type="email"
+                              variant="faded"
+                              label="Member Mail"
+                              // color={errorMessage.length > 0 ? "danger" : "default"}
+                              value={teamDetails[index]?.team_member_email}
+                              onValueChange={(value) =>
+                                handleMemberChange(
+                                  index,
+                                  "team_member_email",
+                                  value
+                                )
+                              }
+                            />
+                            <div className="ml-4">
+                              <Input
+                                type="text"
+                                variant="faded"
+                                label="Name"
+                                value={teamDetails[index]?.team_member_name}
+                                onValueChange={(value) =>
+                                  handleMemberChange(
+                                    index,
+                                    "team_member_name",
+                                    value
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
+                        </>
+                      ))}
                       {errorMessage.length > 0 ? (
                         <p
                           style={{
@@ -231,23 +255,23 @@ const Page = (props: Props) => {
                           {errorMessage}
                         </p>
                       ) : null}
-                    </>
-                  ))}
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={closeModal}>
-                  Close
-                </Button>
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={closeModal}>
+                      Close
+                    </Button>
 
-                {loading ? (
-                  <Spinner />
-                ) : (
-                  <Button color="primary" onPress={handleSubmit}>
-                    Submit
-                  </Button>
-                )}
-              </ModalFooter>
+                    {loading ? (
+                      <Spinner />
+                    ) : (
+                      <Button color="primary" onPress={handleSubmit}>
+                        Submit
+                      </Button>
+                    )}
+                  </ModalFooter>
+                </>
+              )}
             </>
           )}
         </ModalContent>
