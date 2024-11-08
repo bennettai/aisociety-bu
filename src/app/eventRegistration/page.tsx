@@ -100,7 +100,7 @@ const Page = (props: Props) => {
     }
   };
 
-  const handleMemberChange = (index: number, field: string, value: string) => {
+  const handleMemberChange = (index: number, field: "team_member_name" | "team_member_email" | "team_name", value: string) => {
     const updatedDetails = [...teamDetails];
 
     updatedDetails[index][field] = value;
@@ -123,7 +123,7 @@ const Page = (props: Props) => {
     const loadData = async () => {
       if (userTable.length === 0) {
         const data = await fetchUserTable();
-        setUserTable(data);
+        setUserTable(data || []);
       }
     };
 
