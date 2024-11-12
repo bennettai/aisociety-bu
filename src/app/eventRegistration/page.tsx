@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from "react";
 import {
   Modal,
@@ -20,7 +20,9 @@ import Link from "next/link";
 
 type Props = {};
 
+
 const Page = (props: Props) => {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(true);
   const closeModal = () => setIsOpen(false);
   const [teamName, setTeamName] = useState("");
@@ -94,6 +96,7 @@ const Page = (props: Props) => {
           setLoading(false);
         }
       }
+      router.push('/');
     } else {
       alert("Please fill in all the values");
       setLoading(false);
