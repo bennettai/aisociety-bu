@@ -1,3 +1,6 @@
+import { image } from "@nextui-org/react";
+import { link } from "fs";
+
 // Save this in a file such as contentData.js
 const contentData = {
   whatsapp_link: "https://chat.whatsapp.com/JNWPTs2NwBf1sTaHMF4t3Y",
@@ -13,6 +16,7 @@ const contentData = {
       image: "/ais-hero.jpg",
     },
     events: [
+
       {
         title: "Campus AI Fest",
         description:
@@ -37,6 +41,29 @@ const contentData = {
         image: "/event-biy.png",
         link: "#",
       },
+      {
+        title: 'Copilot Lab Inaugration Ceremony',
+        description: "Inaugration Ceremony and Workshop for the Copilot Lab sponsored by Microsoft. Included guest sessions from Top Experts",
+        date: "August 13, 2024",
+        image: "/event-copilot-inaug.png",
+        link: "#",
+      },
+      {
+        title: "Club Carnival and Freshers Orientation",
+        description: "Freshers Orientation and Club Carnival for the new batch of students. Included a variety of fun demos, games and fun events",
+        date: "August 23, 2024",
+        image: "/event-carnival.png",
+        link: "#",
+      },
+      {
+        title: "AI 101",
+        description: "Introductory hands-on workshop for freshers incuding multidisciplinary sessions across Artificial Intelligence and Machine Learning",
+        date: "September 19, 2024",
+        image: "/event-ai101.png",
+        link: "#",
+      },
+
+
     ],
     leadership: [
       {

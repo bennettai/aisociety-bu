@@ -92,7 +92,7 @@ const Navbar = () => {
               'Register for Hunt AI 2.0'
             ].map((item) => (
               <Link
-                href={`${item != "Register for Hunt AI 2.0" ? item.toLowerCase().replace(" ", "-") : "eventRegistration"}`}
+                href={`${item != "Register for Hunt AI 2.0" ? item != "Home" ? item.toLowerCase().replace(" ", "-") : '/' : "eventRegistration"}`}
                 key={item}
                 className="py-2 hover:underline underline-offset-4"
               >
