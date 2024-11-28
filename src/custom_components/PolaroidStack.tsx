@@ -13,14 +13,14 @@ const Polaroid: React.FC<PolaroidProps> = ({ src, alt, rotation = 0 }) => (
     style={{
       transform: `rotate(${rotation}deg)`,
       width: "250px",
-      height: "300px",
+      height: "280px", // Adjusted to match the image height
     }}
   >
     <Image
       src={src}
       alt={alt}
-      width={280}
-      height={280}
+      width={250} // Adjusted to match the container width
+      height={250} // Adjusted to match the container height
       style={{ objectFit: "cover" }}
     />
     <div className="mt-4 text-center text-normal font-medium">{alt}</div>
