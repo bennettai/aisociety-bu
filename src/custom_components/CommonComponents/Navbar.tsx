@@ -37,32 +37,31 @@ const Navbar = () => {
       <NavigationMenu>
         <NavigationMenuList className="hidden lg:flex gap-4">
           {/* {["About", "Events", "Team", "Blog", "Projects", "Publications"].map( */}
-          {[""].map(
-
-            (item) => (
-              <NavigationMenuItem key={item}>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href={`${item.toLowerCase()}`}
-                    className="font-bold hover:underline underline-offset-4"
-                  >
-                    {item}
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ),
-          )}
+          {[""].map((item) => (
+            <NavigationMenuItem key={item}>
+              <NavigationMenuLink asChild>
+                <Link
+                  href={`${item.toLowerCase()}`}
+                  className="font-bold hover:underline underline-offset-4"
+                >
+                  {item}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          ))}
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="eventRegistration" className="ml-6">
                 {/* <ShimmerButton text="Join Us" /> */}
-                <Button variant="ghost" color="secondary">Register for Hunt AI</Button>
+                <Button variant="ghost" color="secondary">
+                  Registeration for Hunt AI closed
+                </Button>
               </Link>
             </NavigationMenuLink>
             <NavigationMenuLink asChild>
               <Link href="join" className="ml-6">
                 {/* <ShimmerButton text="Join Us" /> */}
-                <Button >Join Us</Button>
+                <Button>Join Us</Button>
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
